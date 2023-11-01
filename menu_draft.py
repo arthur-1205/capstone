@@ -60,11 +60,11 @@ def handle_policy_choice(choice):
     if choice == "1":
         execute_script("01_Deny_all_traffic_to_an_application.py")
     elif choice == "2":
-        print("Bạn đã chọn Limit_traffic_to_an_application.py cho Pod", os.environ["POD"])
+        execute_script("02_Limit_traffic_to_an_application.py")
     elif choice == "3":
-        print("Bạn đã chọn Deny_all_none_whitelisted_traffic_to_a_name_space.py cho Pod", os.environ["POD"])
+        execute_script("03_Deny_all_none_whitelisted_traffic_to_a_name_space.py")
     elif choice == "4":
-        print("Bạn đã chọn Deny_all_traffic_from_other_namespaces.py cho Pod", os.environ["POD"])
+        execute_script("04_Deny_all_traffic_from_other_namespaces.py")
     else:
         print("Tùy chọn không hợp lệ cho Pod.")
 
