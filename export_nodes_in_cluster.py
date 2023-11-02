@@ -8,7 +8,7 @@ def export_all_pods():
     v1 = client.CoreV1Api()
 
     # Liệt kê tất cả các Pods
-    pods = v1.list_pod_for_all_namespaces(watch=False)
+    pods = v1.list_pod_for_all_namespace(watch=False)
 
     # Xuất thông tin của các Pods
     for pod in pods.items:
