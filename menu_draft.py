@@ -62,7 +62,7 @@ def main_menu():
         if choice == "1":
             namespaces = display_namespace()
             selected_namespace = select_namespace(namespaces)
-            with open("config.json", "w") as config_file:
+            with open("namespace.json", "w") as config_file:
                 config = {"namespace": selected_namespace}
                 json.dump(config, config_file)
                 

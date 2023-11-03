@@ -6,7 +6,7 @@ import json
 # Nhập giá trị cho app label từ bàn phím
 new_app_label = input("Nhập giá trị cho app label: ")
 # namespace = selected_namespace
-with open("config.json", "r") as config_file:
+with open("namespace.json", "r") as config_file:
     config = json.load(config_file)
 namespace = config["namespace"]
 
@@ -31,7 +31,7 @@ network_policy = {
                     {
                         "podSelector": {
                             "matchLabels": {
-                                "app": new_app_label,  
+                                "app": new_app_label,
                             }
                         }
                     }
