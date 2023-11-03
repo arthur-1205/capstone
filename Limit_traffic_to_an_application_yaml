@@ -1,15 +1,11 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: api-allow
-  namespace: nginx1
+  name: 'deny-from-other-namespace to namespace: namespace'
+  namespace: tools
 spec:
   ingress:
   - from:
-    - podSelector:
-        matchLabels:
-          app: B
+    - podSelector: {}
   podSelector:
-    matchLabels:
-      app: B
-      role: api
+    matchLabels: {}

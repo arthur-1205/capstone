@@ -12,14 +12,6 @@ def execute_script(script_name):
     except subprocess.CalledProcessError as e:
         print(f"Error executing {script_name}: {e}")
 
-
-#def display_namespace():
-#    os.system("kubectl get namespace")
-
-#def select_namespace():
-#    namespace = input("Chọn Namespace: ")
-    
-
 def display_namespace():
      #Lấy danh sách các Namespace từ Kubernetes Cluster
     namespaces = []
@@ -35,19 +27,6 @@ def select_namespace(namespaces):
     selected = input("Chọn Namespace (nhập số tương ứng): ")
     return namespaces[int(selected) - 1]
 
-
-# def get_dynamic_value():
-#     # Giả sử giá trị này được tính toán hoặc lấy từ nguồn nào đó tại runtime
-#     selected_namespace = "Giá trị động"
-#     return selected_namespace
-
-
-#def display_pods():
-#    os.system(f"kubectl get pods -n {os.environ['NAMESPACE']}")
-
-#def select_pod():
-#    pod_name = input("Chọn Pod: ")
-#    os.environ["POD"] = pod_name
 
 def display_pods(namespace):
     # Lấy danh sách các Pod trong Namespace
@@ -79,19 +58,21 @@ def main_menu():
         print("3. Thoát")
 
         choice = input("Chọn tùy chọn: ")
-
+        selected_namespace = ""
         if choice == "1":
             namespaces = display_namespace()
             selected_namespace = select_namespace(namespaces)
             with open("config.json", "w") as config_file:
                 config = {"namespace": selected_namespace}
                 json.dump(config, config_file)
+                
         elif choice == "2":
-            if select_namespace == " ":
+            if selected_namespace is None:
                 print("Bạn cần chọn Namespace trước.")
             else:
                 pods = display_pods(selected_namespace)
                 selected_pods = select_pod(pods)
+                
                 display_network_policy_menu()
                 pod_choice = input("Chọn tùy chọn cho Pod: ")
                 handle_policy_choice(pod_choice)
@@ -99,6 +80,7 @@ def main_menu():
             break
         else:
             print("Tùy chọn không hợp lệ.")
+
 
 def handle_policy_choice(choice):
     if choice == "1":

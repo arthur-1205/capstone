@@ -1,6 +1,5 @@
 import yaml
 import subprocess
-#from menu_draft import selected_namespace 
 import kubernetes
 import json
 
@@ -22,7 +21,7 @@ network_policy = {
     "spec": {
         "podSelector": {
             "matchLabels": {
-                "app": new_app_label,  # Sử dụng giá trị nhập từ bàn phím
+                "app": new_app_label,  
                 "role": "api"
             }
         },
@@ -32,7 +31,7 @@ network_policy = {
                     {
                         "podSelector": {
                             "matchLabels": {
-                                "app": new_app_label,  # Sử dụng giá trị nhập từ bàn phím
+                                "app": new_app_label,  
                             }
                         }
                     }
@@ -42,14 +41,6 @@ network_policy = {
     }   
 }
 
-# Chuyển đối tượng thành YAML file tạm và in ra
-#Limit_traffic_to_an_application_yaml = yaml.dump(network_policy, default_flow_style=False)
-#with open("Limit_traffic_to_an_application_yaml", "w") as temp_file:
-#    temp_file.write(Limit_traffic_to_an_application_yaml)
-
-#filename = input("Nhập tên file bạn muốn lưu (ví dụ: data.yaml): ")
-#with open(filename, 'w') as file:
-#    yaml.dump(network_policy, file)
     
 def apply_kubernetes_yaml(yaml_file_path):
     try:

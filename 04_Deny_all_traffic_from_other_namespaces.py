@@ -1,12 +1,19 @@
 import yaml
+import subprocess
+import kubernetes
 import json
-def main():
-    network_policy = {
+
+with open("config.json", "r") as config_file:
+    config = json.load(config_file)
+namespace = config["namespace"]
+
+
+network_policy = {
         "kind": "NetworkPolicy",
         "apiVersion": "networking.k8s.io/v1",
         "metadata": {
-            "namespace": namespace_input,
-            "name": "deny-from-other-namespace"
+            "namespace": namespace,
+            "name": "deny-from-other-namespace to namespace: " + namespace
         },
         "spec": {
             "podSelector": {
@@ -23,6 +30,25 @@ def main():
             ]
         }
     }
+
+def apply_kubernetes_yaml(yaml_file_path):
+    try:
+        # The command you would normally type in the terminal
+        cmd = ['kubectl', 'apply', '-f', yaml_file_path]
+        
+        # Execute the command
+        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+        
+        # Print the output from the command
+        print(result.stdout)
+        
+    except subprocess.CalledProcessError as e:
+        # If the command failed, it will raise this exception
+        print("Error applying YAML:", e.stderr)
+    except Exception as e:
+        # Catch-all for any other exceptions
+        print("An error occurred:", str(e))
+
 
 while True:
             # Menu
@@ -46,6 +72,3 @@ while True:
         else:
             print("Lựa chọn không hợp lệ. Vui lòng chọn lại.")
             
-            
-if __name__ == "__main__":
-    main()

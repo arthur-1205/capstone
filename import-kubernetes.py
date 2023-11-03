@@ -41,6 +41,97 @@ def list_network_policies(namespace):
         print(policy.metadata.name)
 
 
+def deny_all(namespace, pod_name):
+    existing_policies = client.NetworkingV1Api().list_namespaced_network_policy(namespace)
+    for existing_policy in existing_policies.items:
+        if existing_policy.metadata.name == f"{pod_name}-deny-policy":
+            print(f"Network Policy cho Pod {pod_name} đã tồn tại.")
+            return 
+    policy_deny = {
+        "kind": "NetworkPolicy",
+        "apiVersion": "networking.k8s.io/v1",
+        "metadata": {
+            "name": f"{pod_name}-deny-policy"  
+        },
+        "spec": {
+            "podSelector": {
+                "matchLabels": {
+                    "app": pod_name  
+                }
+            },
+            "ingress": []
+        }
+    }
+    return policy_deny
+
+def allow_policy(namespace, pod_name):
+    existing_policies = client.NetworkingV1Api().list_namespaced_network_policy(namespace)
+    for existing_policy in existing_policies.items:
+        if existing_policy.metadata.name == f"{pod_name}-allow-policy":
+            print(f"Network Policy cho Pod {pod_name} đã tồn tại.")
+            return  
+    policy_allow = {
+        "kind": "NetworkPolicy",
+        "apiVersion": "networking.k8s.io/v1",
+        "metadata": {
+            "name": f"{pod_name}-allow-policy" 
+        },
+        "spec": {
+            "podSelector": {
+                "matchLabels": {
+                    "app": pod_name  
+                }
+            },
+            "ingress": []
+        }
+    }
+    return policy_allow
+
+def export_network_policy (namespace, policy_name, file_path):
+    config. load_kube_config()
+    v1 = client.NetworkingV1Api()
+    try:
+        policy = v1. read_namespaced_network_policy (name=policy_name, namespace=namespace)
+        with open(file_path, 'w') as outfile:
+            yaml.dump((policy.to_dict), outfile, default_flow_style=False) 
+            print (f"Network Policy '{policy_name}' exported to '{file_path}'.")
+        return True
+    except Exception as e:
+        print(f"Error exporting Network Policy: {e}")
+        return False
+
+'''def confirm_apply(namespace, pod_name, policy):
+    confirm = input ("Xác nhận áp dụng policy: "Y" để áp dụng, "N" để trở về ")
+    if confirm.lower == "y":
+        client.NetworkingV1Api().create_namespaced_network_policy(namespace, policy)
+        print(f"Network Policy đã được áp dụng cho Pod {pod_name} thành công!")
+    elif confirm.lower == "n":
+        print(f"Không áp dụng policy")'''
+
+'''def apply_network_policy(namespace, pod_name):
+    # Điều chỉnh Network Policy cho Pod trong Namespace
+    policy = {
+        "kind": "NetworkPolicy",
+        "apiVersion": "networking.k8s.io/v1",
+        "metadata": {
+            "name": "example-policy"
+        },
+        "spec": {
+            "podSelector": {
+                "matchLabels": {
+                    "app": pod_name  # Sử dụng tên Pod cho nhãn app
+                }
+            },
+            "ingress": []
+        }
+    }
+
+    # Áp dụng Network Policy
+    client.NetworkingV1Api().create_namespaced_network_policy(namespace, policy)
+    print(f"Network Policy đã được áp dụng cho Pod {pod_name} thành công!")
+
+   '''
+
 if __name__ == "__main__":
     config.load_kube_config()  # Load cấu hình Kubernetes từ môi trường
 
