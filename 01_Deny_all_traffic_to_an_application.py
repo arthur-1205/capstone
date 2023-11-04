@@ -3,7 +3,10 @@ import subprocess
 import kubernetes
 import json
 
-
+# namespace = selected_namespace
+with open("namespace.json", "r") as config_file:
+    config = json.load(config_file)
+pod_name = config["node"]
 
 network_policy = {
     "kind": "NetworkPolicy",
