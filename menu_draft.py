@@ -51,6 +51,7 @@ def display_network_policy_menu():
     print("4. Deny_all_traffic_from_other_namespace")
 
 def main_menu():
+    selected_namespace = ""
     while True:
         print("Main Menu:")
         print("1. Hiển thị danh sách Namespace và chọn Namespace")
@@ -58,13 +59,13 @@ def main_menu():
         print("3. Thoát")
 
         choice = input("Chọn tùy chọn: ")
-        selected_namespace = ""
+        
         if choice == "1":
             namespaces = display_namespace()
             selected_namespace = select_namespace(namespaces)
-            with open("namespace.json", "w") as config_file:
-                config = {"namespace": selected_namespace}
-                json.dump(config, config_file)
+            # with open("namespace.json", "w") as config_file:
+            #     config = {"namespace": selected_namespace , "pod" : None}
+            #     json.dump(config, config_file)
                 
         elif choice == "2":
             if selected_namespace is None:
@@ -72,7 +73,9 @@ def main_menu():
             else:
                 pods = display_pods(selected_namespace)
                 selected_pods = select_pod(pods)
-                
+                with open("namespace.json", "w") as config_file:
+                    config = {"namespace": selected_namespace , "pod" : selected_pods}
+                    json.dump(config, config_file)
                 display_network_policy_menu()
                 pod_choice = input("Chọn tùy chọn cho Pod: ")
                 handle_policy_choice(pod_choice)
