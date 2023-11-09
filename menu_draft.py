@@ -103,42 +103,45 @@ def handle_policy_choice(choice):
 def main_menu_v2():
     while True:
         print("\n===== MENU =====")
-        print("1. Sử dụng np-viewer")
-        print("2. Giải thích về network policies")
-        print("3. Thoát")
-        choice = input("Nhập lựa chọn của bạn (1/2/3): ")
-
+        print("1. Sử dụng np-viewer và giải thích network policies")
+        print("2. Thoát")
+        choice = input("Nhập lựa chọn của bạn (1/2): ")
+        
         if choice == "1":
-            use_np_viewer()
+            use_np_viewer_and_explain()
         elif choice == "2":
-            print("Fetching namespaces...")
-            cmd = "kubectl get namespaces -o jsonpath='{.items[*].metadata.name}'"
-            namespaces = subprocess.run(cmd.split(), capture_output=True, text=True).stdout.split()
-            for i in range(len(namespaces)):
-                print(f"{i+1}. {namespaces[i]}")
-            #print(namespaces)
-            explain_network_policies()
-            
-        elif choice == "3":
             print("Chương trình kết thúc.")
             break
         else:
             print("Lựa chọn không hợp lệ. Vui lòng thử lại.")
 
-def use_np_viewer():
+def use_np_viewer_and_explain():
     print("Fetching namespaces...")
-    cmd = "kubectl get namespaces -o jsonpath='{.items[*].metadata.name}'"
-    namespaces = subprocess.run(cmd.split(), capture_output=True, text=True).stdout.split()
-    for i in range(len(namespaces)):
-        print(f"{i+1}. {namespaces[i]}")
-    namespace = input("Nhập namespace (nhấn Enter để hiển thị toàn bộ): ")
-    if namespace:
-        os.system(f"kubectl np-viewer -n {namespace}")
-    else:
-        os.system("kubectl np-viewer -A ")
+    cmd = ["kubectl", "get", "namespaces", "-o", "jsonpath={.items[*].metadata.name}"]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    
+    if result.returncode != 0:
+        print("Error fetching namespaces")
+        return
+    
+    namespaces = result.stdout.split()
+    for i, namespace in enumerate(namespaces):
+        print(f"{i+1}. {namespace}")
+    
+    namespace_index = input("Chọn namespace bằng số (nhấn Enter để hiển thị toàn bộ): ")
 
-def explain_network_policies():
-    namespace = input("Nhập namespace bạn muốn tìm hiểu về network policies: ")
+    if namespace_index.isdigit() and 0 < int(namespace_index) <= len(namespaces):
+        selected_namespace = namespaces[int(namespace_index) - 1]
+        # Using the list form of subprocess.run to avoid shell interpretation issues
+        subprocess.run(["kubectl", "np-viewer", "-n", selected_namespace])
+        explain_network_policies(selected_namespace)
+    else:
+        subprocess.run(["kubectl", "np-viewer", "-A"])
+        for ns in namespaces:
+            explain_network_policies(ns)
+
+def explain_network_policies(namespace):
+    
     
     # Lấy danh sách tất cả các network policies trong namespace đó
     cmd = f"kubectl get networkpolicy -n {namespace} -o json"
