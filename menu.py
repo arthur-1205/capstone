@@ -1,139 +1,8 @@
-import kubernetes
-from kubernetes import client, config
-from kubernetes.config.kube_config import yaml
 import os
 import subprocess
 import json
 
-
-def execute_script(script_name):
-    try:
-        subprocess.run(["python", script_name], check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Error executing {script_name}: {e}")
-
-def display_namespace():
-     #Lấy danh sách các Namespace từ Kubernetes Cluster
-    namespaces = []
-    for ns in client.CoreV1Api().list_namespace().items:
-        namespaces.append(ns.metadata.name)
-    return namespaces
-
-def select_namespace(namespaces):
-    # Hiển thị danh sách Namespace và cho phép chọn
-    print("Danh sách Namespace:")
-    for i, ns in enumerate(namespaces):
-        print(f"{i + 1}. {ns}")
-    selected = input("Chọn Namespace (nhập số tương ứng): ")
-    return namespaces[int(selected) - 1]
-
-
-def display_pods(namespace):
-    labels = []
-    pods = client.CoreV1Api().list_namespaced_pod(namespace).items
-    
-    for pod in pods:
-        pod_labels = pod.metadata.labels
-        if pod_labels:
-            labels.append(pod_labels)
-    
-    if not labels:
-        print(f"No labels found in the namespace {namespace}")
-        return None
-    
-    return labels
-
-def select_label(labels):   
-    if not labels:
-        print("No Pod to select.")
-        return None
-
-    print("Danh sách Labels:")
-    for i, label in enumerate(labels):
-        print(f"{i + 1}. {label}")
-
-    while True:
-        selected = input("Chọn Pod (nhập số tương ứng): ")
-        try:
-            selected_index = int(selected) - 1
-            if 0 <= selected_index < len(labels):
-                return list(labels)[selected_index]
-            else:
-                print("Số không hợp lệ. Vui lòng nhập lại.")
-        except ValueError:
-            print("Vui lòng nhập một số nguyên.")
-
-
-'''def select_pod(pods):
-    # Hiển thị danh sách Pod và cho phép chọn
-    print("Danh sách Pod:")
-    for i, pod in enumerate(pods):
-        print(f"{i + 1}. {pod}")
-    selected = input("Chọn Pod (nhập số tương ứng): ")
-    return pods[int(selected) - 1]'''
-
-def display_network_policy_menu():
-    print("Menu Network Policy:")
-    print("01. Deny_all_traffic_to_an_application.")
-    print("02. Limit_traffic_to_an_application")
-    print("03. Deny_all_none_whitelisted_traffic_to_a_name_space")
-    print("04. Deny_all_traffic_from_other_namespace")
-    print("05. Deny_all_traffic_from_app_to_app")
-
 def main_menu():
-    selected_namespace = ""
-    while True:
-        print("Main Menu:")
-        print("1. View Network Menu")
-        print("2. Hiển thị danh sách Namespace và chọn Namespace")
-        print("3. Chọn Pod trong Namespace")
-        print("4. Thoát")
-
-        choice = input("Chọn tùy chọn: ")
-        if choice == "1":
-            main_menu_v2()
-            
-        elif choice == "2":
-            namespaces = display_namespace()
-            selected_namespace = select_namespace(namespaces)
-            # with open("namespace.json", "w") as config_file:
-            #     config = {"namespace": selected_namespace , "pod" : None}
-            #     json.dump(config, config_file)
-                
-        elif choice == "3":
-            if selected_namespace is None:
-                print("Bạn cần chọn Namespace trước.")
-            else:
-                labels = display_pods(selected_namespace)
-                selected_label = select_label(labels)
-                with open("namespace.json", "w") as config_file:
-                    config = {"namespace": selected_namespace, "label": selected_label}
-                    json.dump(config, config_file)
-                display_network_policy_menu()
-                pod_choice = input("Chọn policy cho Pod: ")
-                handle_policy_choice(pod_choice)
-       
-        elif choice == "4":
-            break
-        else:
-            print("Tùy chọn không hợp lệ.")
-
-
-def handle_policy_choice(choice):
-    if choice == "1":
-        execute_script("01_Deny_all_traffic_to_an_application.py")
-    elif choice == "2":
-        execute_script("02_Limit_traffic_to_an_application.py")
-    elif choice == "3":
-        execute_script("03_Deny_all_none_whitelisted_traffic_to_a_name_space.py")
-    elif choice == "4":
-        execute_script("04_Deny_all_traffic_from_other_namespace.py")
-    elif choice == "5":
-        execute_script("05_Deny_all_traffic_from_app_to_app.py")    
-    else:
-        print("Tùy chọn không hợp lệ cho Pod.")
-
-def main_menu_v2():
     while True:
         print("\n===== MENU =====")
         print("1. Sử dụng np-viewer")
@@ -159,11 +28,6 @@ def main_menu_v2():
             print("Lựa chọn không hợp lệ. Vui lòng thử lại.")
 
 def use_np_viewer():
-    print("Fetching namespaces...")
-    cmd = "kubectl get namespaces -o jsonpath='{.items[*].metadata.name}'"
-    namespaces = subprocess.run(cmd.split(), capture_output=True, text=True).stdout.split()
-    for i in range(len(namespaces)):
-        print(f"{i+1}. {namespaces[i]}")
     namespace = input("Nhập namespace (nhấn Enter để hiển thị toàn bộ): ")
     if namespace:
         os.system(f"kubectl np-viewer -n {namespace}")
@@ -277,10 +141,7 @@ def print_ports(ports):
             print(f"      và qua protocol {protocol} trên port {port_number}")
     else:
         print("      cho mọi ports và protocols")
-        
-        
-config.load_kube_config()
-
+    
 if __name__ == "__main__":
     main_menu()
-    
+

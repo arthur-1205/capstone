@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-from-appa-to-appb
+  namespace: tools
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchExpressions:
+        - key: app
+          operator: NotIn
+          values:
+          - AppA
+  podSelector:
+    matchLabels:
+      app: AppB
+  policyTypes:
+  - Ingress
