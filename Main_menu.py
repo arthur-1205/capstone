@@ -64,14 +64,6 @@ def select_label(labels):
             print("Please enter an Integer!!")
 
 
-'''def select_pod(pods):
-    # Hiển thị danh sách Pod và cho phép chọn
-    print("Danh sách Pod:")
-    for i, pod in enumerate(pods):
-        print(f"{i + 1}. {pod}")
-    selected = input("Chọn Pod (nhập số tương ứng): ")
-    return pods[int(selected) - 1]'''
-
 def display_network_policy_menu():
     print("Menu Network Policy:")
     print("01. Deny_all_traffic_to_an_application")
@@ -101,7 +93,7 @@ def main_menu():
             #     json.dump(config, config_file)
                 
         elif choice == "3":
-            if selected_namespace is None:
+            if selected_namespace == "":
                 print("You need to choose Namespace first!")
             else:
                 labels = display_pods(selected_namespace)
