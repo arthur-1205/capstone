@@ -52,9 +52,9 @@ def apply_kubernetes_yaml(yaml_file_path):
 
 while True:
             # Menu
-        print("1. Thực thi")
-        print("2. Xuất ra file yaml với tên do bạn chọn")
-        choice = input("Chọn một lựa chọn (1 hoặc 2): ")
+        print("1. Execute")
+        print("2. Export to a yaml file with a name of your choice")
+        choice = input("Select an option (1 or 2): ")
 
         if choice == "1":
             Deny_all_traffic_from_other_namespaces = yaml.dump(network_policy, default_flow_style=False)
@@ -64,11 +64,11 @@ while True:
 
             break
         elif choice == "2":
-            filename = input("Nhập tên file bạn muốn lưu (ví dụ: data.yaml): ")
+            filename = input("Enter the file name you want to save (for example, data.(yaml)): ")
             with open(filename, 'w') as file:
                 yaml.dump(network_policy, file)
-            print(f"Đã lưu vào {filename}.yaml!")
+            print(f"Saved to {filename}.yaml!")
             break
         else:
-            print("Lựa chọn không hợp lệ. Vui lòng chọn lại.")
+            print("Invalid selection. Please select again!")
             
