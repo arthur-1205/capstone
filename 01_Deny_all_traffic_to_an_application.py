@@ -9,14 +9,14 @@ with open("namespace.json", "r") as config_file:
     config = json.load(config_file)
 
 namespace = config["namespace"]
-selected_label = config["label"]
+selected_label = config.get("label", {}).get("app", "")
 
 # Construct the NetworkPolicy YAML with the label as the pod selector
 network_policy = {
     "kind": "NetworkPolicy",
     "apiVersion": "networking.k8s.io/v1",
     "metadata": {
-        "name": f"{selected_label}-deny-policy"  # Use the label in the policy name
+        "name": f"{selected_label.lower()}-deny-policy"  # Use the label in the policy name
     },
     "spec": {
         "podSelector": {
