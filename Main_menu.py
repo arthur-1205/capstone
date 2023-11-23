@@ -232,7 +232,7 @@ def explain_from_rule(from_rule):
         except_ips = from_rule["ipBlock"].get("except", [])
         print(f"  + IPBlock CIDR: {cidr}")
         for ip in except_ips:
-            print(f"    - Trừ địa chỉ IP: {ip}")
+            print(f"    - Subtract IP address: {ip}")
     
     if "namespaceSelector" in from_rule:
         ns_selector = from_rule['namespaceSelector']
