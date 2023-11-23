@@ -110,7 +110,7 @@ def main_menu():
                     config = {"namespace": selected_namespace, "label": selected_label}
                     json.dump(config, config_file)
                 display_network_policy_menu()
-                pod_choice = input("Select Policy for " + selected_label + ": ")
+                pod_choice = input("Select Policy for: ")
                 handle_policy_choice(pod_choice)
        
         elif choice == "4":
@@ -128,7 +128,7 @@ def handle_policy_choice(choice):
     elif choice == "3":
         execute_script("03_Deny_all_none_whitelisted_traffic_to_a_name_space.py")
     elif choice == "4":
-        execute_script("04_Deny_all_traffic_from_other_namespace.py")
+        execute_script("04_Deny_all_traffic_from_other_namespaces.py")
     elif choice == "5":
         execute_script("05_Deny_all_traffic_from_app_to_app.py")    
     else:
