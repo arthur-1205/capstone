@@ -8,18 +8,32 @@ with open("namespace.json", "r") as config_file:
     config = json.load(config_file)
 
 namespace = config["namespace"]
-selected_label = config["label"]
+selected_label = config.get("label", {}).get("app", "")
 
 network_policy = {
-    "kind" : "NetworkPolicy",
-    "apiVersion":"networking.k8s.io/v1",
-    "metadata":{
-    "name": f"{selected_label}-deny-all-none-whitelisted"
-},
-  "namespace": namespace,
-  "spec": {
+    "kind": "NetworkPolicy",
+    "apiVersion": "networking.k8s.io/v1",
+    "metadata": {
+        "name": f"{selected_label.lower()}-deny-all-none-whitelisted",
+        "namespace": namespace
+    },
+    "spec": {
         "podSelector": {},
-        "ingress": []
+        "policyTypes": ["Ingress"],
+        "ingress": [
+            {
+                "from": [
+                    {
+                        "podSelector": {
+                            "matchLabels": {
+                                # Add labels for whitelisted pods
+                                "whitelist-label-key": "whitelist-label-value"
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
     }
 }
 

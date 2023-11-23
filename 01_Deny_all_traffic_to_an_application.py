@@ -16,7 +16,7 @@ network_policy = {
     "kind": "NetworkPolicy",
     "apiVersion": "networking.k8s.io/v1",
     "metadata": {
-        "name": f"{selected_label.lower()}-deny-policy"  # Use the label in the policy name
+        "name": f"{selected_label.lower()}-deny-all-policy"  # Use the label in the policy name
     },
     "spec": {
         "podSelector": {
