@@ -2,6 +2,7 @@ import yaml
 import subprocess
 import kubernetes
 import json
+import os
 
 # Read namespace and label from the configuration file
 with open("namespace.json", "r") as config_file:
@@ -23,6 +24,7 @@ network_policy = {
                 "app": selected_label  # Use the label in the pod selector
             }
         },
+        "policyTypes": ["Ingress"],  # Specify the policy type
         "ingress": []
     }
 }
@@ -44,32 +46,33 @@ def apply_kubernetes_yaml(yaml_file_path):
         # Catch-all for any other exceptions
         print("An error occurred:", str(e))
 
+    import os
+
 while True:
-            # Menu
-        print("1. Execute")
-        print("2. Export to a yaml file with a name of your choice")
-        choice = input("Select an option (1 or 2): ")
+    # Menu
+    print("1. Execute")
+    print("2. Export to a YAML file with a name of your choice")
+    choice = input("Select an option (1 or 2): ")
 
-        if choice == "1":
-            '''Deny_all_traffic_to_an_application = yaml.dump(network_policy, default_flow_style=False)
-            with open("Deny_all_traffic_to_an_application", "w") as temp_file:
-                temp_file.write(Deny_all_traffic_to_an_application)
-            apply_kubernetes_yaml('Deny_all_traffic_to_an_application')'''
-            yaml_string = yaml.dump(network_policy, default_flow_style=False)
-            new_yaml_filename = f"deny-all-traffic-to-an application.yaml"
+    if choice == "1":
+        # Creating a YAML file with a specific name
+        yaml_string = yaml.dump(network_policy, default_flow_style=False)
+        new_yaml_filename = os.path.join(os.getcwd(), r"deny-all-traffic-from-selectedpod-to-application.yaml")
+        with open(new_yaml_filename, "w") as temp_file:
+            temp_file.write(yaml_string)
 
-            with open(new_yaml_filename, "w") as temp_file:
-                temp_file.write(yaml_string)
+        # Applying the YAML file to Kubernetes
+        apply_kubernetes_yaml(new_yaml_filename)
+        break
 
-            apply_kubernetes_yaml(new_yaml_filename)
+    elif choice == "2":
+        # Exporting to a YAML file with a user-specified name
+        filename = input("Enter the file name you want to save (for example, data.yaml):")
+        with open(filename, 'w') as file:
+            yaml.dump(network_policy, file)
+        print(f"Saved to {filename}!")
 
-            break
-        elif choice == "2":
-            filename = input("Enter the file name you want to save (for example, data(.yaml)):")
-            with open(filename, 'w') as file:
-                yaml.dump(network_policy, file)
-            print(f"Saved to {filename}.yaml!")
-            break
-        else:
-            print("Invalid selection. Please select again!")
-            
+        break
+
+    else:
+        print("Invalid selection. Please select again!")
