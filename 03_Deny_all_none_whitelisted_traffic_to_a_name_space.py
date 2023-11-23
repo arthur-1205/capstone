@@ -48,10 +48,10 @@ while True:
         choice = input("Chọn một lựa chọn (1 hoặc 2): ")
 
         if choice == "1":
-            Limit_traffic_to_an_application_yaml = yaml.dump(network_policy, default_flow_style=False)
-            with open("Limit_traffic_to_an_application_yaml", "w") as temp_file:
-                temp_file.write(Limit_traffic_to_an_application_yaml)
-            apply_kubernetes_yaml('Limit_traffic_to_an_application_yaml')
+            Deny_all_none_whitelisted_traffic_to_a_namespace = yaml.dump(network_policy, default_flow_style=False)
+            with open("Deny_all_none_whitelisted_traffic_to_a_namespace", "w") as temp_file:
+                temp_file.write(Deny_all_none_whitelisted_traffic_to_a_namespace)
+            apply_kubernetes_yaml('Deny_all_none_whitelisted_traffic_to_a_namespace')
 
             break
         elif choice == "2":
