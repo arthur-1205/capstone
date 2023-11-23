@@ -21,10 +21,10 @@ def display_namespace():
 
 def select_namespace(namespaces):
     # Hiển thị danh sách Namespace và cho phép chọn
-    print("Danh sách Namespace:")
+    print("List of Namespaces:")
     for i, ns in enumerate(namespaces):
         print(f"{i + 1}. {ns}")
-    selected = input("Chọn Namespace (nhập số tương ứng): ")
+    selected = input("Select Namespace (enter the corresponding number): ")
     return namespaces[int(selected) - 1]
 
 
@@ -48,20 +48,20 @@ def select_label(labels):
         print("No Pod to select.")
         return None
 
-    print("Danh sách Labels:")
+    print("List of Labels:")
     for i, label in enumerate(labels):
         print(f"{i + 1}. {label}")
 
     while True:
-        selected = input("Chọn Pod (nhập số tương ứng): ")
+        selected = input("Select Pod (enter the corresponding number): ")
         try:
             selected_index = int(selected) - 1
             if 0 <= selected_index < len(labels):
                 return list(labels)[selected_index]
             else:
-                print("Số không hợp lệ. Vui lòng nhập lại.")
+                print("Invalid number. Please re-enter!")
         except ValueError:
-            print("Vui lòng nhập một số nguyên.")
+            print("Please enter an Integer!!")
 
 
 '''def select_pod(pods):
@@ -74,7 +74,7 @@ def select_label(labels):
 
 def display_network_policy_menu():
     print("Menu Network Policy:")
-    print("01. Deny_all_traffic_to_an_application.")
+    print("01. Deny_all_traffic_to_an_application")
     print("02. Limit_traffic_to_an_application")
     print("03. Deny_all_none_whitelisted_traffic_to_a_name_space")
     print("04. Deny_all_traffic_from_other_namespace")
@@ -83,13 +83,13 @@ def display_network_policy_menu():
 def main_menu():
     selected_namespace = ""
     while True:
-        print("Main Menu:")
+        print("\n===== Main MENU =====")
         print("1. View Network Menu")
-        print("2. Hiển thị danh sách Namespace và chọn Namespace")
-        print("3. Chọn Pod trong Namespace")
-        print("4. Thoát")
+        print("2. Display the Namespace list and select Namespace")
+        print("3. Select Pod in Namespace")
+        print("4. Exit \n")
 
-        choice = input("Chọn tùy chọn: ")
+        choice = input("Select options: ")
         if choice == "1":
             main_menu_v2()
             
@@ -102,7 +102,7 @@ def main_menu():
                 
         elif choice == "3":
             if selected_namespace is None:
-                print("Bạn cần chọn Namespace trước.")
+                print("You need to choose Namespace first!")
             else:
                 labels = display_pods(selected_namespace)
                 selected_label = select_label(labels)
@@ -110,13 +110,14 @@ def main_menu():
                     config = {"namespace": selected_namespace, "label": selected_label}
                     json.dump(config, config_file)
                 display_network_policy_menu()
-                pod_choice = input("Chọn policy cho Pod: ")
+                pod_choice = input("Select Policy for " + selected_label + ": ")
                 handle_policy_choice(pod_choice)
        
         elif choice == "4":
+            print("Thanks for using this Tools!!")
             break
         else:
-            print("Tùy chọn không hợp lệ.")
+            print("Invalid option.")
 
 
 def handle_policy_choice(choice):
@@ -131,22 +132,22 @@ def handle_policy_choice(choice):
     elif choice == "5":
         execute_script("05_Deny_all_traffic_from_app_to_app.py")    
     else:
-        print("Tùy chọn không hợp lệ cho Pod.")
+        print("Invalid option for Pod.")
 
 def main_menu_v2():
     while True:
         print("\n===== MENU =====")
-        print("1. Sử dụng np-viewer và giải thích về network policies")
-        print("2. Thoát")
-        choice = input("Nhập lựa chọn của bạn (1/2): ")
+        print("1. Use np-viewer and explain Network Policies")
+        print("2. Exit")
+        choice = input("Enter your choice (1/2): ")
 
         if choice == "1":
             use_np_viewer_and_explain()  
         elif choice == "2":
-            print("Chương trình kết thúc.")
+            print("The program Ends.")
             break
         else:
-            print("Lựa chọn không hợp lệ. Vui lòng thử lại.")
+            print("Invalid selection. Please try again!")
 
 def use_np_viewer_and_explain():
     print("Fetching namespaces...")
@@ -161,7 +162,7 @@ def use_np_viewer_and_explain():
     for i, namespace in enumerate(namespaces):
         print(f"{i+1}. {namespace}")
     
-    namespace_index = input("Chọn namespace bằng số (nhấn Enter để hiển thị toàn bộ): ")
+    namespace_index = input("Select namespace by Number (press Enter to display all): ")
 
     if namespace_index.isdigit() and 0 < int(namespace_index) <= len(namespaces):
         selected_namespace = namespaces[int(namespace_index) - 1]
@@ -181,14 +182,14 @@ def explain_network_policies(namespace):
     result = subprocess.run(cmd.split(), capture_output=True, text=True)
     
     if result.returncode != 0 or "No resources found" in result.stdout:
-        print(f"Không có network policies nào trong namespace '{namespace}'.")
+        print(f"There are no network policies in the namespace '{namespace}'.")
         return
     
     policies_data = json.loads(result.stdout).get("items", [])
     
     for policy_data in policies_data:
         policy_name = policy_data.get("metadata", {}).get("name", "")
-        print(f"\nChi tiết về network policy '{policy_name}' trong namespace '{namespace}':")
+        print(f"\nDetails about network policy '{policy_name}' in namespace '{namespace}':")
         
         # Giải thích podSelector
         explain_pod_selector(policy_data)
@@ -200,31 +201,31 @@ def explain_pod_selector(policy_data):
     pod_selector = policy_data.get("spec", {}).get("podSelector", {})
     match_labels = pod_selector.get("matchLabels", {})
     match_expressions = pod_selector.get("matchExpressions", [])
-    print(f"- Network policy '{policy_data.get('metadata', {}).get('name', '')}' áp dụng cho:")
+    print(f"- Network policy '{policy_data.get('metadata', {}).get('name', '')}' apply for:")
     if match_labels:
-        print(f"  + Các pods có labels: {match_labels}")
+        print(f"  + Pods have labels: {match_labels}")
     if match_expressions:
-        print("  + Các pods phù hợp với matchExpressions:")
+        print("  + Pods that match matchExpressions:")
         for expr in match_expressions:
             print(f"    - {expr['key']} {expr['operator']} {expr.get('values', [])}")
     if not match_labels and not match_expressions:
-        print("  + Tất cả các pods trong namespace này.")
+        print("  + All pods in this namespace.")
 
 def explain_ingress_rules(policy_data):
     ingress_rules = policy_data.get("spec", {}).get("ingress", [])
     
     # Nếu không có quy tắc ingress, mặc định sẽ từ chối mọi traffic
     if not ingress_rules:
-        print("- Tất cả traffic đến được từ chối mặc định (mặc định là deny-all behavior).")
+        print("- All incoming traffic is denied by default (default is deny-all behavior).")
         return
 
-    print("- Quy tắc ingress cho phép traffic đến từ các nguồn sau:")
+    print("- The ingress rule allows traffic from the following sources:")
     for rule in ingress_rules:
         from_rules = rule.get("from", [])
         
         # Nếu không có 'from' nào được định nghĩa, quy tắc này cho phép tất cả traffic đến
         if not from_rules:
-            print("  + Mọi nguồn (mọi địa chỉ IP và pods) - chế độ allow-all.")
+            print("  + All sources (all IP addresses and pods) - allow-all mode.")
         else:
             # Giải thích từng quy tắc 'from'
             for from_rule in from_rules:
@@ -251,25 +252,20 @@ def explain_from_rule(from_rule):
 
 # Các hàm print_selector và print_ports giữ nguyên
 
-
-# Các hàm print_selector và print_ports giữ nguyên
-
-    
-
 def print_selector(selector_type, selector):
     match_labels = selector.get("matchLabels", {})
     match_expressions = selector.get("matchExpressions", [])
     
     if match_labels:
-        print(f"    - {selector_type} có labels: {match_labels}")
+        print(f"    - {selector_type} have labels: {match_labels}")
     
     for expr in match_expressions:
         if expr['operator'] == 'In':
-            print(f"    - {selector_type} với {expr['key']} trong {expr.get('values', [])}")
+            print(f"    - {selector_type} with {expr['key']} trong {expr.get('values', [])}")
         elif expr['operator'] == 'NotIn':
-            print(f"    - {selector_type} không chứa {expr['key']} trong {expr.get('values', [])}")
+            print(f"    - {selector_type} does not contain {expr['key']} trong {expr.get('values', [])}")
         else:
-            print(f"    - {selector_type} với {expr['key']} {expr['operator']} {expr.get('values', [])}")
+            print(f"    - {selector_type} with {expr['key']} {expr['operator']} {expr.get('values', [])}")
 
 
 def print_ports(ports):
@@ -277,9 +273,9 @@ def print_ports(ports):
         for port in ports:
             protocol = port.get('protocol', 'TCP')
             port_number = port.get('port', 'all')
-            print(f"      và qua protocol {protocol} trên port {port_number}")
+            print(f"      and via protocol {protocol} on port {port_number}")
     else:
-        print("      cho mọi ports và protocols")
+        print("      for all ports and protocols")
         
         
 config.load_kube_config()
