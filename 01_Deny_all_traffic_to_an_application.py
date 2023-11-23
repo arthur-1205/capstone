@@ -51,10 +51,17 @@ while True:
         choice = input("Select an option (1 or 2): ")
 
         if choice == "1":
-            Deny_all_traffic_to_an_application = yaml.dump(network_policy, default_flow_style=False)
+            '''Deny_all_traffic_to_an_application = yaml.dump(network_policy, default_flow_style=False)
             with open("Deny_all_traffic_to_an_application", "w") as temp_file:
                 temp_file.write(Deny_all_traffic_to_an_application)
-            apply_kubernetes_yaml('Deny_all_traffic_to_an_application')
+            apply_kubernetes_yaml('Deny_all_traffic_to_an_application')'''
+            yaml_string = yaml.dump(network_policy, default_flow_style=False)
+            new_yaml_filename = f"deny-all-traffic-to-an application.yaml"
+
+            with open(new_yaml_filename, "w") as temp_file:
+                temp_file.write(yaml_string)
+
+            apply_kubernetes_yaml(new_yaml_filename)
 
             break
         elif choice == "2":
