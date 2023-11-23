@@ -11,6 +11,7 @@ with open("namespace.json", "r") as config_file:
 label_2 = namespace_config.get("label", {}).get("app", "")
 namespace = namespace_config["namespace"]
 
+
 def display_pods(namespace):
     labels = []
     pods = client.CoreV1Api().list_namespaced_pod(namespace).items
@@ -31,7 +32,7 @@ def select_label(labels):
         print("No Pod to select.")
         return None
 
-    print("Danh sách Labels:")
+    print("Select the Label you want to deny all traffic to " + label_2 + ": ")
     for i, label in enumerate(labels):
         print(f"{i + 1}. {label}")
     while True:
