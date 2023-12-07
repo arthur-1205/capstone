@@ -253,9 +253,9 @@ def print_selector(selector_type, selector):
     
     for expr in match_expressions:
         if expr['operator'] == 'In':
-            print(f"    - {selector_type} with {expr['key']} trong {expr.get('values', [])}")
+            print(f"    - {selector_type} with {expr['key']} in {expr.get('values', [])}")
         elif expr['operator'] == 'NotIn':
-            print(f"    - {selector_type} does not contain {expr['key']} trong {expr.get('values', [])}")
+            print(f"    - {selector_type} does not contain {expr['key']} in {expr.get('values', [])}")
         else:
             print(f"    - {selector_type} with {expr['key']} {expr['operator']} {expr.get('values', [])}")
 
